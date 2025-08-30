@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import Header from './components/Header';
 import Sidebar from './components/Sidebar';
@@ -18,19 +17,21 @@ export type MobileTab = 'chart' | 'trade' | 'positions';
 const App: React.FC = () => {
   const [selectedProduct, setSelectedProduct] = useState<Product>(PRODUCTS[0]);
   const [view, setView] = useState<View>('login');
-  const [theme, setTheme] = useState<Theme>('light');
+  const [theme, setTheme] = useState<Theme>(() => {
+    // Initialize theme from localStorage or default to 'light'
+    const savedTheme = localStorage.getItem('theme') as Theme | null;
+    return savedTheme || 'light';
+  });
   const [mobileTab, setMobileTab] = useState<MobileTab>('chart');
 
   useEffect(() => {
+    // Apply theme class to the document and save to localStorage
     if (theme === 'dark') {
       document.documentElement.classList.add('dark');
-      document.body.classList.add('dark:bg-dark-bg');
-      document.body.classList.remove('bg-light-bg');
     } else {
       document.documentElement.classList.remove('dark');
-      document.body.classList.add('bg-light-bg');
-       document.body.classList.remove('dark:bg-dark-bg');
     }
+    localStorage.setItem('theme', theme);
   }, [theme]);
 
   const toggleTheme = () => {
@@ -54,7 +55,7 @@ const App: React.FC = () => {
   }
 
   return (
-    <div className="flex flex-col h-screen bg-light-bg dark:bg-dark-bg text-gray-800 dark:text-gray-200 font-sans text-xs">
+    <div className="bg-light-bg dark:bg-dark-bg flex flex-col h-screen text-gray-800 dark:text-gray-200 font-sans text-xs">
       <Header 
         theme={theme} 
         toggleTheme={toggleTheme} 
